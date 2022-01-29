@@ -1,0 +1,23 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#canvas1 {
+  width: 1200px;
+  height: 800;
+  border: 4px solid black;
+}
+
+flip-image {
+  transform: scaleX(-1);
+}
