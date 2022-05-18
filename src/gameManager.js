@@ -23,8 +23,6 @@ import BeginDayPopup from "./beginDayPopup";
 import TaxMan from "./taxMan";
 import UpgradeObject from "./upgradeObject";
 
-import { CLAMSTATE } from "./clam";
-
 export const GAMESTATE = {
   BUSINESSDAY: 0,
   NIGHT: 1,
