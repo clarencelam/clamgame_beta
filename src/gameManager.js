@@ -43,6 +43,7 @@ export const GAMESTATE = {
 
 export default class GameManager {
   constructor(gameWidth, gameHeight, ctx) {
+    // Initialize game objects
     this.ctx = ctx;
     this.GAME_WIDTH = gameWidth;
     this.GAME_HEIGHT = gameHeight;
@@ -63,7 +64,7 @@ export default class GameManager {
   }
 
   start() {
-    // start new game
+    // Restart game objects to start new game
     this.gameStats = new GameStats(this.GAME_WIDTH, this.GAME_HEIGHT);
 
     this.bullets = [];
@@ -76,8 +77,6 @@ export default class GameManager {
     this.upgrades = [];
     this.kitchen = new Kitchen(this.GAME_WIDTH, this.GAME_HEIGHT);
 
-    // For now, just start with game running
-
     this.upgrades.push(
       new UpgradeObject(800, 500, 0, this.gameStats, this.kitchen)
     );
@@ -87,8 +86,9 @@ export default class GameManager {
   }
 
   update(deltaTime) {
+    // ----- GAMESTATES DETERMINE THE ACTIVE FUNCTIONS IN-GAME -----
     switch (this.gamestate) {
-      // ----- GAMESTATE = BUSINESSDAY -----
+      // ----- GAMESTATE = BUSINESSDAY: CUSTOMERS & ENEMIES ACTIVE -----
       case GAMESTATE.BUSINESSDAY:
         this.thugs = this.gameStats.thugs; // makes thug list inherit from gamestats
         this.thugs.forEach((thug) => initializeThugRandomMovement(thug));
@@ -96,7 +96,6 @@ export default class GameManager {
         this.thugs = this.thugs.filter((thug) => !thug.markfordelete);
 
         this.kitchen.update(deltaTime);
-        // this.generateCustomers();
         this.customers = this.customers.filter(
           (customer) => !customer.markfordelete
         );
@@ -118,6 +117,7 @@ export default class GameManager {
         }
         break;
 
+      // ----- PASSIVE GAMESTATES: ONLY CLAM ACTIVE -----
       case GAMESTATE.TAXHOUSE:
       case GAMESTATE.INHOME:
       case GAMESTATE.UPGRADEROOM:
@@ -161,6 +161,7 @@ export default class GameManager {
 
         break;
 
+      // ----- GAMESTATE = ENDDAY: CLOSE ACTIVE GAME-DAY -----
       case GAMESTATE.ENDDAY:
         this.kitchen.update(deltaTime);
         this.updateCustomers(deltaTime);
@@ -182,6 +183,7 @@ export default class GameManager {
 
         break;
 
+      // ----- IN-BETWEEN GAMESTATES. STAGING FOR NEXT LEVEL TO START -----
       case GAMESTATE.TUTORIAL:
       case GAMESTATE.NEXTLEVEL:
         // Show popup, update objects needed in tutorial
@@ -199,6 +201,7 @@ export default class GameManager {
         }
         break;
 
+      // ----- GAMESTATE = GAMEOVER: END GAME -----
       case GAMESTATE.GAMEOVER:
         this.kitchen.update(deltaTime);
         this.updateCustomers(deltaTime);
@@ -438,7 +441,7 @@ export default class GameManager {
     }
   }
 
-  // ------------------ MESSY HELPER FUNCTIONS ------------------
+  // ------------------ HELPER FUNCTIONS ------------------
 
   eraseObjects() {
     this.bullets = [];
