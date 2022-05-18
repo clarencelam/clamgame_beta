@@ -22,13 +22,14 @@ export default class TutorialPopup {
     this.box_line3 = "INSTRUCTIONS:";
     this.box_line4 = "Move with ARROW KEYS or WASD. Throw items with SPACEBAR";
     this.box_line5 =
-      "Collect food from your food truck and feed as many customers as you can!";
-    this.box_line6 = "But make sure you make enough money to pay the tax.";
+      "Collect food from your food truck and feed as many snail customers as you can!";
+    this.box_line6 =
+      "And be careful for bandits-- you should do your best to evade them";
     this.box_line7 =
-      "And be careful for thieves-- a rock or two should keep them away";
+      "At the end of the day, you can pay taxes and make upgrades.";
     this.box_line8 = "TODAY'S WORKDAY: " + this.timer_length + " SECONDS";
     this.box_line9 = "TAX OWED AT END OF DAY: " + this.tax_amount + " DOLLARS";
-    this.box_line10 = "Walk RIGHT to begin the workday";
+    this.box_line10 = "Press SPACE to close";
   }
 
   drawTextLine(ctx, line, linenum) {
