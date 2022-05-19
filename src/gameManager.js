@@ -22,6 +22,7 @@ import Portal from "/src/portal";
 import BeginDayPopup from "./beginDayPopup";
 import TaxMan from "./taxMan";
 import UpgradeObject from "./upgradeObject";
+import ArrowObject from "./arrowObject";
 
 export const GAMESTATE = {
   BUSINESSDAY: 0,
@@ -76,6 +77,7 @@ export default class GameManager {
     this.portals = [];
     this.upgrades = [];
     this.kitchen = new Kitchen(this.GAME_WIDTH, this.GAME_HEIGHT);
+    this.guide_arrows = [];
 
     this.upgrades.push(
       new UpgradeObject(800, 500, 0, this.gameStats, this.kitchen)
@@ -296,6 +298,8 @@ export default class GameManager {
         );
         this.clam.draw(ctx);
         this.gameStats.draw(ctx);
+        this.guide_arrows.forEach((arrow) => arrow.draw(ctx));
+        this.checkArrowCollision(ctx);
         break;
 
       case GAMESTATE.INCITY1:
@@ -552,6 +556,7 @@ export default class GameManager {
       this.bullets = [];
       this.customers = [];
       this.coins = [];
+      this.guide_arrows = [];
       this.gamestate = GAMESTATE.BUSINESSDAY;
       initializeCooking(this.kitchen);
       initializeTimer(this.gameStats);
@@ -687,6 +692,9 @@ export default class GameManager {
     if (gamestate === GAMESTATE.INHOOD_DAY) {
       this.eraseObjects();
       this.gamestate = GAMESTATE.INHOOD_DAY;
+      // Generate arrow to point player to start business day
+      this.guide_arrows.push(new ArrowObject(1020, 200, true, "placeholder"));
+      // todo: clear guide_arrows upon entering gamestate==businessday
     }
 
     if (gamestate === GAMESTATE.TAXHOUSE) {
@@ -922,6 +930,17 @@ export default class GameManager {
         taxguy.drawPopup(ctx);
       }
     }
+  }
+
+  checkArrowCollision(ctx) {
+    let arrows = this.guide_arrows;
+
+    arrows.forEach((arrow) => {
+      if (detectRectCollision(this.clam, arrow)) {
+        console.log("clam arrow collission");
+        arrow.drawPopup(ctx);
+      }
+    });
   }
 
   payTaxMan() {
