@@ -46,6 +46,13 @@ export default class ArrowObject {
   }
 
   draw(ctx) {
-    ctx.drawImage(this.img, this.x_pos, this.y_pos, this.width, this.height);
+    if (this.is_facing_right === true) {
+      ctx.drawImage(this.img, this.x_pos, this.y_pos, this.width, this.height);
+    } else {
+      ctx.translate(this.x_pos + this.width, this.y_pos);
+      ctx.scale(-1, 1);
+      ctx.drawImage(this.img, 0, 0, this.width, this.height);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+    }
   }
 }

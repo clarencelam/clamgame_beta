@@ -60,7 +60,7 @@ export default class GameManager {
     this.clam = new Clam(this.GAME_WIDTH, this.GAME_HEIGHT);
 
     new InputHandler(ctx, this.clam);
-    this.gamestate = GAMESTATE.MENU;
+    this.gamestate = GAMESTATE.MENU; // default: GAMESTATE.MENU
     this.spacebarHandler();
   }
 
@@ -145,6 +145,8 @@ export default class GameManager {
         this.clam.update(deltaTime);
         if (this.clam.x_pos <= 0) {
           this.goToGamestate(GAMESTATE.INHOOD_NIGHT);
+        } else if (this.clam.x_pos + this.clam.width >= this.GAME_WIDTH) {
+          this.goToGamestate(GAMESTATE.INCITY1);
         }
         break;
 
@@ -267,10 +269,10 @@ export default class GameManager {
         ctx.drawImage(this.car, 600, 178);
         let objectstodraw = [
           this.kitchen,
-          this.clam,
           this.gameStats,
           ...this.bullets,
           ...this.coins,
+          ...this.guide_arrows,
           ...this.popups
         ];
         objectstodraw.forEach((object) => object.draw(ctx));
@@ -278,14 +280,21 @@ export default class GameManager {
         this.npcs.forEach((npc) => npc.draw(ctx));
         this.portals.forEach((object) => object.draw(ctx));
         this.checkTaxMan(ctx);
+        this.checkArrowCollision(ctx);
+        this.clam.draw(ctx);
 
         break;
 
       case GAMESTATE.INHOOD_NIGHT:
         ctx.drawImage(this.hood_bg, 0, 0, this.GAME_WIDTH, this.GAME_HEIGHT);
-        this.clam.draw(ctx);
-        this.portals.forEach((object) => object.draw(ctx));
-        this.gameStats.draw(ctx);
+        [
+          ...this.portals,
+          ...this.guide_arrows,
+          this.clam,
+          this.gameStats
+        ].forEach((object) => object.draw(ctx));
+        this.checkArrowCollision(ctx);
+
         break;
 
       case GAMESTATE.INHOOD_DAY:
@@ -296,9 +305,10 @@ export default class GameManager {
           this.GAME_WIDTH,
           this.GAME_HEIGHT
         );
-        this.clam.draw(ctx);
         this.gameStats.draw(ctx);
         this.guide_arrows.forEach((arrow) => arrow.draw(ctx));
+        this.clam.draw(ctx);
+
         this.checkArrowCollision(ctx);
         break;
 
@@ -422,7 +432,12 @@ export default class GameManager {
           this.GAME_WIDTH,
           this.GAME_HEIGHT
         );
-        [...this.bullets, ...this.popups].forEach((object) => object.draw(ctx));
+        [
+          ...this.bullets,
+          ...this.popups,
+          ...this.guide_arrows
+        ].forEach((object) => object.draw(ctx));
+        this.checkArrowCollision(ctx);
         this.clam.draw(ctx);
         this.gameStats.draw(ctx);
 
@@ -457,6 +472,7 @@ export default class GameManager {
     this.portals = [];
     this.npcs = [];
     this.thugs = [];
+    this.guide_arrows = [];
   }
 
   spacebarHandler() {
@@ -614,6 +630,9 @@ export default class GameManager {
         )
       );
       this.cookOneFood();
+      this.guide_arrows.push(
+        new ArrowObject(1020, 350, true, "Start Business Day")
+      );
     }
 
     if (gamestate === GAMESTATE.GAMEOVER) {
@@ -644,6 +663,11 @@ export default class GameManager {
       this.gamestate = GAMESTATE.NIGHT;
       this.portals.push(new Portal(620, 255, GAMESTATE.INCITY1));
       this.npcs.push(new TaxMan(1000, 600, this.gameStats.days_tax));
+      this.guide_arrows.push(
+        new ArrowObject(5, 350, false, "Go to house to start next day")
+      );
+      this.guide_arrows.push(new ArrowObject(1000, 350, true, "Go to city"));
+      this.guide_arrows.push(new ArrowObject(750, 550, true, "Pay taxman"));
     }
 
     if (gamestate === GAMESTATE.INCITY1) {
@@ -686,6 +710,14 @@ export default class GameManager {
       }
       this.eraseObjects();
       this.portals.push(new Portal(480, 440, GAMESTATE.NEXTLEVEL));
+      this.guide_arrows.push(
+        new ArrowObject(
+          300,
+          350,
+          true,
+          "Press spacebar on bed to sleep & start next day"
+        )
+      );
       this.gamestate = GAMESTATE.INHOOD_NIGHT;
     }
 
@@ -693,8 +725,9 @@ export default class GameManager {
       this.eraseObjects();
       this.gamestate = GAMESTATE.INHOOD_DAY;
       // Generate arrow to point player to start business day
-      this.guide_arrows.push(new ArrowObject(1020, 200, true, "placeholder"));
-      // todo: clear guide_arrows upon entering gamestate==businessday
+      this.guide_arrows.push(
+        new ArrowObject(1020, 350, true, "Start Business Day")
+      );
     }
 
     if (gamestate === GAMESTATE.TAXHOUSE) {

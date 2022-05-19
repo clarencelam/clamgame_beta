@@ -7,16 +7,15 @@ export default class TaxMan {
     this.width = 115 + 40;
     this.height = 75 + 40;
 
-    this.popup_x = this.x_pos - 500;
-    this.popup_y = this.y_pos - 300;
+    this.popup_x = 300;
+    this.popup_y = 600;
     this.popup_width = 600;
     this.popup_height = 200;
 
     this.line1 = "Hello Clam. Today's tax is $" + days_tax;
-    this.line2 =
-      "Press spacebar to pay and we will ensure your spot in Maple Island";
-    this.line3 = "If you don't pay though, we cannot promise your protection";
-    this.line4 = "from the more... malevolent citizens...";
+    this.line2 = "Press spacebar to pay.";
+    this.line3 = "If you don't pay, we can't ensure your protection.";
+    this.line4 = "You might see more bandits and thieves tomorrow...";
   }
 
   drawTextLine(ctx, line, linenum) {
